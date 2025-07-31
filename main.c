@@ -17,9 +17,7 @@ int main(){
 	struct gpiod_line_request *read_request = NULL, *write_request = NULL;
 	int outgpio[4];
 	enum gpiod_line_value values[4][4];
-	struct {
-		u32 down;
-	}key[4][4];
+	u32 key[4][4];
 
 	chip = gpiod_chip_open("/dev/gpiochip0");
 	read_settings = gpiod_line_settings_new();
@@ -46,13 +44,13 @@ int main(){
 			gpiod_line_request_set_values(write_request,outgpio);
 			for (int j=0;j<4;j++){
 				gpiod_line_request_get_values(read_request,*(values+(i<<2)));
-				if(!values[i][j] && key[i][j].down<8388607){
-					++key[i][j].down;
+				if(!values[i][j] && key[i][j]<8388607){
+					++key[i][j];
 				}
-				else if(values[i][j] && key[i][j].down){
-					key[i][j].down = 0;
+				else if(values[i][j] && key[i][j]){
+					key[i][j] = 0;
 				}
-				printf("%dX%d:%05d",0,1 ,key[0][1].down );
+				printf("%dX%d:%05d",0,1 ,key[0][1]);
 				printf("\r");
 			}
 		}
