@@ -46,7 +46,7 @@ int main(){
 			gpiod_line_request_set_values(write_request,outgpio);
 			for (int j=0;j<4;j++){
 				gpiod_line_request_get_values(read_request,*(values+(i<<2)));
-				if(!values[i][j]){
+				if(!values[i][j] && key[i][j].down<8388607){
 					++key[i][j].down;
 				}
 				else if(values[i][j] && key[i][j].down){
