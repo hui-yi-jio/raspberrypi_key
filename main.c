@@ -1,5 +1,5 @@
-#include <gpiod.h>
-#include <stdio.h>
+#include <gpiod.h> 
+#include <stdio.h> 
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -40,21 +40,21 @@ int main(){
 
 	while(1){
 		for(int i=0;i<4;i++){
-			outgpio[0] = outgpio[1] = outgpio[2] = outgpio[3] = 1,outgpio[i] = 0;
+			outgpio[0] = outgpio[1] = outgpio[2] = outgpio[3] = 0,outgpio[i] = 1;
 			gpiod_line_request_set_values(write_request,outgpio);
 			for (int j=0;j<4;j++){
 				gpiod_line_request_get_values(read_request,*(values+(i<<2)));
-				if(!values[i][j] && key[i][j]<8388607){
+				if(values[i][j] && key[i][j]<8388607){
 					++key[i][j];
 				}
-				else if(values[i][j] && key[i][j]){
+				else if(!values[i][j] && key[i][j]){
 					key[i][j] = 0;
-				}
-				printf("%dX%d:%05d",0,1 ,key[0][1]);
-				printf("\r");
-			}
+					printf("%dX%d:%05d",1,1 ,key[1][1]);
+					printf("\r"); 
+				} 
+			} 
 		}
-	}
+	} 
     if (read_request) gpiod_line_request_release(read_request);
     if (read_req_cfg) gpiod_request_config_free(read_req_cfg);
     if (read_line_cfg) gpiod_line_config_free(read_line_cfg);
