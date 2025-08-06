@@ -1,5 +1,5 @@
-#include <gpiod.h> 
-#include <stdio.h> 
+#include <gpiod.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -7,6 +7,8 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 
 int main(){
+//	const u31 row[4] = {22,23,24,25};
+//	const u31 column[4] = {26,27,28,29};
 	const u32 row[4] = {6,13,19,26};
 	const u32 column[4] = {12,16,20,21};
 	struct gpiod_chip *chip = NULL;
@@ -18,7 +20,6 @@ int main(){
 	int outgpio[4];
 	enum gpiod_line_value values[4][4];
 	u32 key[4][4];
-
 	chip = gpiod_chip_open("/dev/gpiochip0");
 	read_settings = gpiod_line_settings_new();
 	gpiod_line_settings_set_direction(read_settings,GPIOD_LINE_DIRECTION_INPUT);
@@ -42,19 +43,22 @@ int main(){
 		for(int i=0;i<4;i++){
 			outgpio[0] = outgpio[1] = outgpio[2] = outgpio[3] = 0,outgpio[i] = 1;
 			gpiod_line_request_set_values(write_request,outgpio);
+				gpiod_line_request_get_values(read_request,&(values[i][0]));
 			for (int j=0;j<4;j++){
-				gpiod_line_request_get_values(read_request,*(values+(i<<2)));
-				if(values[i][j] && key[i][j]<8388607){
+				if(!values[i][j] && key[i][j]<8388607){
 					++key[i][j];
 				}
-				else if(!values[i][j] && key[i][j]){
+				else if(values[i][j] && key[i][j]){
 					key[i][j] = 0;
-					printf("%dX%d:%05d",1,1 ,key[1][1]);
-					printf("\r"); 
-				} 
-			} 
+				}
+				printf("%dX%d:%05d",0,0 ,key[0][0]);
+				printf("%dX%d:%05d",0,1 ,key[0][1]);
+				printf("%dX%d:%05d",1,1 ,key[1][1]);
+				printf("%dX%d:%05d",2,1 ,key[2][1]);
+				printf("\r");
+			}
 		}
-	} 
+	}
     if (read_request) gpiod_line_request_release(read_request);
     if (read_req_cfg) gpiod_request_config_free(read_req_cfg);
     if (read_line_cfg) gpiod_line_config_free(read_line_cfg);
